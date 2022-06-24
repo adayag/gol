@@ -16,14 +16,14 @@ Any live cell with more than three live neighbours dies, as if by overpopulation
 Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
 
 ### Notes as I go
-# Separation of concerns
-# Game
-#   responsible for initializing and running the world and iterations/ticks?
-# Board
-#  responsible for all the information of the grid
-#  responsible for determining what will be alive or dead next iteration?
-# Cell
-#   alive or not alive?
-# Printer
-#   visually takes an iteration of a board and prints it out
+Separation of concerns
+* Game
+  * responsible for initializing and running the world and iterations/ticks?
+* Board
+ * responsible for all the information of the grid
+ * responsible for determining what will be alive or dead next iteration?
+* Cell
+  * alive or not alive?
+* Printer
+  * visually takes an iteration of a board and prints it out
 
