@@ -4,7 +4,7 @@
 1. Restricted board size.  Post MVP: Can extend to take any size board?
 2. Live/Dead cell rules account for edge of board
 3. Random population of live cells to start
-4. Can do any amount of iterations up to 100?
+4. Can do any amount of iterations up to 100? Post MVP: Infinite if cells alive?
 5. Can display in terminal.  Post MVP: Can extend to a prettier display or gem?
 
 ### Rules

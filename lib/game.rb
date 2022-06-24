@@ -1,9 +1,11 @@
 require "pry"
+
 class Game
   BOARD_SIZE = 50
+  MAX_ITERATIONS = 100
 
   def initialize
-    @iteration = 0
+    @iteration = 1
     @board = Board.new(BOARD_SIZE)
     @printer = Printer.new
   end
@@ -12,8 +14,21 @@ class Game
     @board.seed_life
   end
 
-  def print_board
-    @printer.print_board(@board)
+  def pass_time
+    print_board(@board, @iteration)
+
+    until @iteration == MAX_ITERATIONS
+      sleep(1)
+
+      @board.next_life!
+      @iteration += 1
+
+      print_board(@board, @iteration)
+    end
+  end
+
+  def print_board(board, iteration)
+    @printer.print_board(board, iteration)
   end
 end
 
@@ -34,7 +49,70 @@ class Board
     end
   end
 
+  def next_life!
+    new_grid = []
+
+    @grid.each do |row|
+      new_array = []
+      row.each do |cell|
+        new_array << Cell.new(cell.x_loc, cell.y_loc, should_be_alive?(cell))
+      end
+      new_grid << new_array
+    end
+
+    @grid = new_grid
+  end
+
   private
+
+  def live_neighbors_count(cell)
+    neighbors = neighbors(cell)
+    neighbors.count { |cell| cell.alive? }
+  end
+
+  # please test this monster
+  def neighbors(cell)
+    neighbors = []
+
+    x_loc = cell.x_loc
+    y_loc = cell.y_loc
+
+    #north
+    neighbors << @grid.dig(x_loc - 1, y_loc)
+    #east
+    neighbors << @grid.dig(x_loc, y_loc + 1)
+    #south
+    neighbors << @grid.dig(x_loc + 1, y_loc)
+    #west
+    neighbors << @grid.dig(x_loc, y_loc-1)
+    #northwest
+    neighbors << @grid.dig(x_loc - 1, y_loc - 1)
+    #northeast
+    neighbors << @grid.dig(x_loc - 1, y_loc + 1)
+    #southwest
+    neighbors << @grid.dig(x_loc + 1, y_loc - 1)
+    #southeast
+    neighbors << @grid.dig(x_loc + 1, y_loc + 1)
+
+    neighbors.compact
+  end
+
+  def should_be_alive?(cell)
+    live_count = live_neighbors_count(cell)
+
+    if cell.alive?
+      # rule 1
+      return false if live_count < 2
+      # rule 2
+      return true if [2,3].include?(live_count)
+      # rule 3
+      return false if live_count > 3
+    elsif cell.dead?
+      # rule 4
+      return true if live_count == 3
+    end
+    false
+  end
 
   def create_grid
     grid = []
@@ -50,28 +128,40 @@ class Board
 end
 
 class Cell
-  def initialize(x_loc, y_loc)
+  attr_reader :x_loc, :y_loc
+
+  def initialize(x_loc, y_loc, alive=false)
     @x_loc = x_loc
     @y_loc = y_loc
-    @alive = false
+    @alive = alive
   end
 
   def ressurect
     @alive = true
   end
 
+  def kill
+    @alife = false
+  end
+
   def alive?
-    @alive != false
+    !!@alive
+  end
+
+  def dead?
+    !@alive
   end
 end
 
 # overkill? you betcha
 # coupled? you betcha
 class Printer
-  def print_board(board)
+  def print_board(board, iteration)
+    system "clear"
+    puts "Iteration #{iteration}"
     board.grid.map do |row|
       row.each do |cell|
-        print cell.alive? ? "*" : " "
+        print cell.alive? ? "O" : " "
         print " "
       end
       puts
