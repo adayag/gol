@@ -1,5 +1,11 @@
 # Game of Life
 
+### How to run
+```
+ $ bundle install
+ $ ruby gol.rb
+```
+
 ### Scope
 1. Restricted board size.  Post MVP: Can extend to take any size board?
 2. Live/Dead cell rules account for edge of board
