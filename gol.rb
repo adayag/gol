@@ -1,3 +1,5 @@
 require_relative "lib/game"
 
-Game.new.print_board
+game = Game.new
+game.seed_board
+game.print_board
