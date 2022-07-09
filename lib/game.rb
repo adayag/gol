@@ -35,9 +35,9 @@ end
 class Board
   attr_reader :board_size, :grid
 
-  def initialize(board_size)
+  def initialize(board_size, grid=nil)
     @board_size = board_size
-    @grid = create_grid
+    @grid = grid || create_grid
   end
 
   def seed_life
@@ -63,8 +63,6 @@ class Board
     @grid = new_grid
   end
 
-  private
-
   def live_neighbors_count(cell)
     neighbors = neighbors(cell)
     neighbors.count { |cell| cell.alive? }
@@ -77,22 +75,39 @@ class Board
     x_loc = cell.x_loc
     y_loc = cell.y_loc
 
+    # #north
+    # neighbors << @grid.dig(x_loc - 1, y_loc) if x_loc > 0
+    # #east
+    # neighbors << @grid.dig(x_loc, y_loc + 1)
+    # #south
+    # neighbors << @grid.dig(x_loc + 1, y_loc)
+    # #west
+    # neighbors << @grid.dig(x_loc, y_loc - 1) if y_loc > 0
+    # #northwest
+    # neighbors << @grid.dig(x_loc - 1, y_loc - 1) if y_loc > 0 && x_loc > 0
+    # #northeast
+    # neighbors << @grid.dig(x_loc - 1, y_loc + 1) if x_loc > 0
+    # #southwest
+    # neighbors << @grid.dig(x_loc + 1, y_loc - 1) if y_loc > 0
+    # #southeast
+    # neighbors << @grid.dig(x_loc + 1, y_loc + 1)
+    #
     #north
-    neighbors << @grid.dig(x_loc - 1, y_loc)
+    neighbors << @grid.dig(y_loc - 1, x_loc) if y_loc > 0
     #east
-    neighbors << @grid.dig(x_loc, y_loc + 1)
+    neighbors << @grid.dig(y_loc, x_loc + 1)
     #south
-    neighbors << @grid.dig(x_loc + 1, y_loc)
+    neighbors << @grid.dig(y_loc + 1, x_loc)
     #west
-    neighbors << @grid.dig(x_loc, y_loc-1)
+    neighbors << @grid.dig(y_loc, x_loc - 1) if x_loc > 0
     #northwest
-    neighbors << @grid.dig(x_loc - 1, y_loc - 1)
+    neighbors << @grid.dig(y_loc - 1, x_loc - 1) if x_loc > 0 && y_loc > 0
     #northeast
-    neighbors << @grid.dig(x_loc - 1, y_loc + 1)
+    neighbors << @grid.dig(y_loc - 1, x_loc + 1) if y_loc > 0
     #southwest
-    neighbors << @grid.dig(x_loc + 1, y_loc - 1)
+    neighbors << @grid.dig(y_loc + 1, x_loc - 1) if x_loc > 0
     #southeast
-    neighbors << @grid.dig(x_loc + 1, y_loc + 1)
+    neighbors << @grid.dig(y_loc + 1, x_loc + 1)
 
     neighbors.compact
   end
@@ -113,6 +128,8 @@ class Board
     end
     false
   end
+
+  private
 
   def create_grid
     grid = []
